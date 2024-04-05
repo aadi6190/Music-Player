@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="player.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* CSS to hide the audio controls */
+    #song {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="music-player">
+      <nav>
+        <div class="circle">
+          <i class="fa-solid fa-angles-left"></i>
+        </div>
+        <div class="circle">
+          <i class="fa-solid fa-bars"></i>
+        </div>
+      </nav>
+      <img src="images/darmiya.jpg" class="song-img" />
+      <h1>Darmiyaan</h1>
+      Shafqat Amanat Ali Khan
+      <br />
+      <br />
+      <h4>Jodi Breakers ℗ 2012 Super Cassettes Industries Private Limited</h4>
+      <!-- The audio element is hidden with CSS -->
+      <audio controls id="song">
+        <source src="images/Darmiyaan-Slowed-Reverb.mp3" type="audio/mpeg" />
+      </audio>
+      <input type="range" value="0" id="progress" />
+
+      <div class="controls">
+        <div>
+          <i class="fa-solid fa-backward" onclick="playPreviousSong()"></i>
+        </div>
+        <div>
+          <i
+            class="fa-solid fa-play"
+            id="ctrlIcon"
+            onclick="togglePlayPause()"
+          ></i>
+        </div>
+        <div>
+          <i class="fa-solid fa-forward" onclick="playNextSong()"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Define an array of songs
+    const songs = [
+      {
+        title: "Darmiyaan",
+        artist: "Shafqat Amanat Ali Khan",
+        source: "images/Darmiyaan-Slowed-Reverb.mp3",
+        image: "images/darmiyaan-thumbnail.png",
+      },
+      {
+        title: "Phir Le Aya Dil",
+        artist: "Arijit Singh",
+        source: "images/phir.mp3",
+        image: "images/phir.jpg",
+      },
+      {
+        title: "Takey Olpo Kachhe Dakchhi",
+        artist: "Mahtim Shakib",
+        source: "images/alpo.mp3",
+        image: "images/alpo.jpg",
+      },
+      // Add more songs as needed
+    ];
+
+    let currentSongIndex = 0;
+    let song = document.getElementById("song");
+    let ctrlIcon = document.getElementById("ctrlIcon");
+    let progress = document.getElementById("progress");
+    let songImage = document.querySelector(".song-img");
+
+    function togglePlayPause() {
+      if (song.paused) {
+        song.play();
+        ctrlIcon.classList.remove("fa-play");
+        ctrlIcon.classList.add("fa-pause");
+      } else {
+        song.pause();
+        ctrlIcon.classList.remove("fa-pause");
+        ctrlIcon.classList.add("fa-play");
+      }
+    }
+
+    function playNextSong() {
+      currentSongIndex++;
+      if (currentSongIndex >= songs.length) {
+        currentSongIndex = 0; // Wrap around to the first song if at the end
+      }
+      updateSongInfo();
+    }
+
+    function playPreviousSong() {
+      currentSongIndex--;
+      if (currentSongIndex < 0) {
+        currentSongIndex = songs.length - 1; // Wrap around to the last song if at the beginning
+      }
+      updateSongInfo();
+    }
+
+    function updateSongInfo() {
+      let currentSong = songs[currentSongIndex];
+      song.src = currentSong.source;
+      song.load(); // Load the new song
+      song.play(); // Auto-play the new song
+      ctrlIcon.classList.remove("fa-play");
+      ctrlIcon.classList.add("fa-pause");
+      document.querySelector(".music-player h1").innerText =
+        currentSong.title;
+      document.querySelector(".music-player h4").innerText =
+        currentSong.artist;
+
+      // Update thumbnail image based on the current song
+      if (currentSong.title.toLowerCase() === "darmiyaan") {
+        songImage.src = "images/darmiya.jpg";
+      } else if (currentSong.title.toLowerCase() === "phir le aya dil") {
+        songImage.src = "images/phir.jpg";
+      } else if (currentSong.title.toLowerCase() === "Takey Olpo Kachhe Dakchhi") {
+        songImage.src = "images/prem.jpg";
+      } else {
+        // Default thumbnail image if the song title doesn't match specific cases
+        songImage.src = "images/prem.jpg";
+      }
+    }
+
+    song.addEventListener("timeupdate", function () {
+      let currentTime = song.currentTime;
+      let duration = song.duration;
+      progress.value = (currentTime / duration) * 100;
+    });
+
+    progress.addEventListener("input", function () {
+      let seekTime = (progress.value / 100) * song.duration;
+      song.currentTime = seekTime;
+    });
+  </script>
+</body>
+</html>
